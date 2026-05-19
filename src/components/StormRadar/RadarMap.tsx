@@ -106,16 +106,16 @@ export default function RadarMap({ lat, lon }: RadarMapProps) {
             zIndex={5}
           />
           
-          {/* RainViewer Radar Overlay (Render all frames but only make the current one visible) */}
-          {frames.map((frame, index) => (
+          {/* RainViewer Radar Overlay (Only render the active frame to prevent network stalling) */}
+          {frames.length > 0 && frames[currentIndex] && (
             <TileLayer
-              key={frame.time}
-              url={frame.url}
-              opacity={index === currentIndex ? 0.65 : 0}
+              key={frames[currentIndex].time}
+              url={frames[currentIndex].url}
+              opacity={0.65}
               zIndex={10}
               maxNativeZoom={6}
             />
-          ))}
+          )}
         </MapContainer>
 
         {/* Timeline Overlay */}
