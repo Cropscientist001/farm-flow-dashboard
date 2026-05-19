@@ -20,8 +20,9 @@ export default function RadarMap({ lat, lon }: RadarMapProps) {
   const [frames, setFrames] = useState<{ time: number; path: string; url: string; isPrediction?: boolean }[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [loadedIndices, setLoadedIndices] = useState<number[]>([]);
 
-// Fetch Frames
+  // Fetch Frames
   useEffect(() => {
     fetch('https://api.rainviewer.com/public/weather-maps.json')
       .then((res) => res.json())
@@ -36,9 +37,8 @@ export default function RadarMap({ lat, lon }: RadarMapProps) {
           // Farm Flow AI Simulation: If no future data exists, mock it!
           if (nowcastFrames.length === 0) {
             const lastPastTime = pastFrames[pastFramesCount - 1].time;
-            // Generate 12 future frames (2 hours) using past paths (shifts the loop into the future visually)
             nowcastFrames = pastFrames.slice(1).map((f: any, index: number) => ({
-              time: lastPastTime + ((index + 1) * 600), // Add 10 minutes (600s) per frame
+              time: lastPastTime + ((index + 1) * 600),
               path: f.path,
               isPrediction: true
             }));
@@ -57,12 +57,24 @@ export default function RadarMap({ lat, lon }: RadarMapProps) {
           
           setFrames(formattedFrames);
           
-          // Start exactly at the current time (the last real past frame)
-          setCurrentIndex(pastFramesCount - 1);
+          // Start exactly at the current time
+          const startIndex = pastFramesCount - 1;
+          setCurrentIndex(startIndex);
         }
       })
       .catch(console.error);
   }, []);
+
+  // Progressive Preloading
+  useEffect(() => {
+    if (frames.length === 0) return;
+    setLoadedIndices((prev) => {
+      const next1 = (currentIndex + 1) % frames.length;
+      const next2 = (currentIndex + 2) % frames.length;
+      const newIndices = new Set([...prev, currentIndex, next1, next2]);
+      return Array.from(newIndices);
+    });
+  }, [currentIndex, frames.length]);
 
   // Animation Loop
   useEffect(() => {
@@ -106,16 +118,19 @@ export default function RadarMap({ lat, lon }: RadarMapProps) {
             zIndex={5}
           />
           
-          {/* RainViewer Radar Overlay (Only render the active frame to prevent network stalling) */}
-          {frames.length > 0 && frames[currentIndex] && (
-            <TileLayer
-              key={frames[currentIndex].time}
-              url={frames[currentIndex].url}
-              opacity={0.65}
-              zIndex={10}
-              maxNativeZoom={6}
-            />
-          )}
+          {/* Progressive Render: Only mount TileLayers that are loaded or preloading to avoid network choking, but keep them mounted to avoid blinking */}
+          {frames.map((frame, index) => {
+            if (!loadedIndices.includes(index)) return null;
+            return (
+              <TileLayer
+                key={frame.time}
+                url={frame.url}
+                opacity={index === currentIndex ? 0.65 : 0}
+                zIndex={10}
+                maxNativeZoom={6}
+              />
+            );
+          })}
         </MapContainer>
 
         {/* Timeline Overlay */}
