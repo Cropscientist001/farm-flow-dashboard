@@ -9,7 +9,8 @@ export default function DailyForecast({ daily }: DailyForecastProps) {
   if (!daily) return null;
 
   const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
+    // Append T12:00:00 to ensure it parses to noon local time, avoiding timezone offset issues
+    const date = new Date(`${dateStr}T12:00:00`);
     return date.toLocaleDateString('en-US', { weekday: 'long' });
   };
 
