@@ -76,5 +76,5 @@ export const useWeather = () => {
     initLocation();
   }, []);
 
-  return { weather, location, loading, error, handleSearch };
+  return { weather, location, loading, error, handleSearch, handleLocationSelect: fetchWeatherForCoords };
 };

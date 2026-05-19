@@ -11,7 +11,7 @@ import WeatherDetails from '../components/WeatherDetails/WeatherDetails';
 import styles from './page.module.css';
 
 export default function Home() {
-  const { weather, location, loading, error, handleSearch } = useWeather();
+  const { weather, location, loading, error, handleSearch, handleLocationSelect } = useWeather();
 
   if (loading) {
     return (
@@ -24,7 +24,7 @@ export default function Home() {
     );
   }
 
-  if (error && !weather) {
+  if (error || !weather || !location) {
     return (
       <main className={styles.main} style={{ justifyContent: 'center', alignItems: 'center' }}>
         <div className="glass-panel animate-fade-in" style={{ padding: '3rem', textAlign: 'center' }}>
@@ -47,7 +47,7 @@ export default function Home() {
 
       <div className={styles.dashboardGrid}>
         <div className={styles.columnLeft}>
-          <SearchBar onSearch={handleSearch} loading={loading} />
+          <SearchBar onSearch={handleSearch} onLocationSelect={handleLocationSelect} loading={loading} />
           <WeatherHero current={weather?.current} />
           <WeatherDetails current={weather?.current} daily={weather?.daily} />
           <HourlyForecast hourly={weather?.hourly} />

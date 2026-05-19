@@ -11,7 +11,10 @@ interface RadarMapProps {
 function MapUpdater({ lat, lon }: { lat: number; lon: number }) {
   const map = useMap();
   useEffect(() => {
-    map.setView([lat, lon]);
+    map.flyTo([lat, lon], 8, {
+      duration: 2.5,
+      easeLinearity: 0.25
+    });
   }, [lat, lon, map]);
   return null;
 }

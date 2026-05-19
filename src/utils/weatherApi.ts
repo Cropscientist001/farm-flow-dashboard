@@ -38,6 +38,29 @@ export const searchLocation = async (query: string) => {
   throw new Error('Location not found');
 };
 
+export interface GeocodingResult {
+  lat: number;
+  lon: number;
+  city: string;
+  state: string;
+  country: string;
+}
+
+export const searchLocations = async (query: string): Promise<GeocodingResult[]> => {
+  const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`);
+  const data = await res.json();
+  if (data.results && data.results.length > 0) {
+    return data.results.map((r: any) => ({
+      lat: r.latitude,
+      lon: r.longitude,
+      city: r.name,
+      state: r.admin1 || '',
+      country: r.country || '',
+    }));
+  }
+  return [];
+};
+
 export const fetchWeatherData = async (lat: number, lon: number): Promise<WeatherData> => {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,is_day,weather_code,relative_humidity_2m,wind_speed_10m&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max&timezone=auto&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch`;
   
