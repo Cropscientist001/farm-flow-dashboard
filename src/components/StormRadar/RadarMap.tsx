@@ -17,7 +17,7 @@ function MapUpdater({ lat, lon }: { lat: number; lon: number }) {
 }
 
 export default function RadarMap({ lat, lon }: RadarMapProps) {
-  const [frames, setFrames] = useState<{ time: number; path: string; url: string }[]>([]);
+  const [frames, setFrames] = useState<{ time: number; path: string; url: string; isPrediction?: boolean }[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
