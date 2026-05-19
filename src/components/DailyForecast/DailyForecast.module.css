@@ -1,0 +1,90 @@
+.container {
+  width: 100%;
+  padding: 1.5rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dayRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.dayRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.dayName {
+  flex: 1;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.iconAndCondition {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.icon {
+  font-size: 1.5rem;
+}
+
+.temps {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.minTemp {
+  opacity: 0.7;
+  width: 2rem;
+  text-align: right;
+}
+
+.maxTemp {
+  font-weight: 600;
+  width: 2rem;
+}
+
+.tempBar {
+  flex: 1;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  max-width: 100px;
+}
+
+.tempBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #A0C4FF, #FFADAD);
+  border-radius: 3px;
+  width: 100%; /* For visual flair we just fill it. For a real app, calculate offset and width based on min/max of the week */
+}
+
+@media (max-width: 480px) {
+  .tempBar {
+    display: none;
+  }
+  .temps {
+    flex: 1;
+  }
+}
